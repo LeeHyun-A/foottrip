@@ -129,7 +129,7 @@ public class ActionTab extends ActionBarActivity {
 			Intent intent = new Intent(ActionTab.this, MainActivity.class);
 			startActivity(intent);
 
-			android.os.Process.killProcess(android.os.Process.myPid());
+			finish();
 
 			break;
 		default:

@@ -24,10 +24,16 @@
         android:orientation="vertical" >
 
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/firstname"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:hint="name" />
+            android:hint="First-name" />
+
+        <EditText
+            android:id="@+id/lasttname"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:hint="Last-name" />
 
         <EditText
             android:id="@+id/email"
