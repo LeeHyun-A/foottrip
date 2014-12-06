@@ -1,5 +1,10 @@
 package com.example.trip;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.Date;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,9 +15,10 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.FileObserver;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -47,6 +53,18 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 	public static final String TEST_SERIVCE_STRING = "test_service_string";
 	private NotificationManager mNoti;
 	
+	
+	//camera
+	//member variable for File Read and Write
+	private FileObserver pOb, rOb;
+	//object for Record data
+	private RecordModel RM = new RecordModel();
+	//boolean which check if device record
+	private boolean isRecord = false;
+	//to indicate file path data(for test, will remove) 이변수랑 관련된 모든건 테스트용임
+	private String selectedFilePath = "입력된 파일 정보 없음.";
+		
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		super.onStartCommand(intent, flags, startId);
@@ -55,6 +73,23 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 		mLocationClient.connect();
 		Log.d("ONSTART", "UPDATE");
 		notification();
+		
+		
+		//////////////////camera////
+		String cameraDirectory = android.os.Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + "/Camera"; 
+		String recordDirectory = android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/Sounds";
+
+		//Log.d("record", cameraDirectory);
+		//					Log.d("record", recordDirectory);
+		pOb = initSingleDirectoryObserver(cameraDirectory);
+		rOb = initSingleDirectoryObserver(recordDirectory);
+
+		//watching file(photo/video/record) write
+		pOb.startWatching();
+		rOb.startWatching();
+		
+		
+		
 		return START_STICKY;
 	}
 	public void notification(){
@@ -121,10 +156,97 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 						Log.d("FusedLocationService", "Last best location returned ["+lastbestStaleLocation.getLatitude()+","+lastbestStaleLocation.getLongitude()+"] in "+(Long.valueOf(System.currentTimeMillis())-now)+" ms");
 					Log.e("test", "here2");
 					Log.e("test", "here3");
+					
+
 				}
 		};
 	}
+	/** 
+	 * @author  ieunseong
+	 * @content Initiate a single observer of a given directory 
+	 * @param   partial path of the directory to keep watch of. 
+	 */ 
+	private FileObserver initSingleDirectoryObserver(String directoryPath) { 
+		final String dirPath = directoryPath; 
+		FileObserver observer = new FileObserver(directoryPath) { 
+			@Override 
+			public void onEvent(int event, String file) {
 
+				String filePath = dirPath + "/" + file;
+				String gpsVal="No location found";
+
+				if (event == FileObserver.CREATE) {
+					//Detecting write operation of camera file
+					Location latlng = getLastBestStaleLocation();
+					String latLongString= "Lat:" + latlng.getLatitude() + "\nLong:" + latlng.getLongitude();
+					gpsVal =  latLongString;
+					Log.d("path",file);
+					Log.d("filePath",filePath);
+					Log.d("gpsVal", ""+gpsVal);
+
+					//Distinguish photo and video
+					if(file.contains("jpg")) RM.addPhotoList(filePath, gpsVal, new Date());
+//					else if(file.contains("mp4")) RM.addVideoList(filePath, gpsVal, new Date());
+
+					isRecord = true;
+					selectedFilePath = filePath + "\n" +"�쐞移�: " + gpsVal; 
+				}else if (event == FileObserver.MOVED_TO) {
+					//Detecting write operation of voice file
+					Location latlng = getLastBestStaleLocation();
+					String latLongString= "Lat:" + latlng.getLatitude() + "\nLong:" + latlng.getLongitude();
+					gpsVal =  latLongString;
+					Log.d("path",file);
+					Log.d("filePath",filePath);
+					Log.d("gpsVal", ""+gpsVal);
+
+					if(file.contains("mp4")) RM.addVideoList(filePath, gpsVal, new Date());
+					else if(file.contains("m4a")) RM.addVoiceList(filePath, gpsVal, new Date());
+
+					isRecord = true;
+					selectedFilePath = filePath + "\n" +"�쐞移�: " + gpsVal; 
+				}
+			} 
+		}; 
+		return observer; 
+	} 
+	
+	/**
+	 * @author ieunseong
+	 * @content save log data on ~/FOOTTRIP
+	 * */
+	public boolean saveLogData(){
+		FileOutputStream fos;
+		String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file  = new File(deviceIndependentRootAddress + "/FOOTTRIP");
+		Log.d("tests", "save start");
+		if(!file.exists()){
+			file.mkdir(); 
+			Log.d("mkdir","make directory");
+		}
+
+		//Write file in the FOOTTRIP
+		try {
+			Date dt = new Date();
+			String dateInfo = ""+toStr(dt.getYear()-100)+toStr(dt.getMonth())+toStr(dt.getDate())+"_"+toStr(dt.getHours())+toStr(dt.getMinutes())+toStr(dt.getSeconds());
+
+			fos = new FileOutputStream(deviceIndependentRootAddress + "/FOOTTRIP/LogList"+dateInfo+".dat");
+
+			ObjectOutputStream objectout = new ObjectOutputStream(fos);
+			objectout.writeObject(RM);
+			objectout.reset();
+
+			Log.d("RM stored?","yes");
+			fos.close();
+		}
+		catch (Exception e) 
+		{// TODO: handle exception
+			Log.e("File error #1:", e.getMessage());
+			return false;
+		}
+
+		return true;
+	}	
+	
 	private void sendLocationUsingBroadCast(Location location) {
 		//
 		SharedPreferences pref = getSharedPreferences("pref", Context.MODE_PRIVATE);
@@ -181,6 +303,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 			int pause = pref.getInt("PAUSE", 0);
 			if(pause == 0){//not pause
 				sendLocationUsingBroadCast(location);
+				
 			}
 		}
 	}
@@ -218,6 +341,17 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 		return bestResult;
 	}
 
+	/**
+	 * @author ieunseong
+	 * @category non-functional method
+	 * @comment return date info which is one-digit to two digit 
+	 *			like (Month:7/Day:9) _ 79 —> 0709
+	 *	*/
+	public String toStr(int d){
+		if(d<10) return "0"+d;
+		return ""+d;
+	}
+	
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
@@ -226,6 +360,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
             mLocationClient.disconnect();
     	mNoti = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mNoti.cancel(1);
+		
+		Toast.makeText(getApplicationContext(), "saving try: "+isRecord, Toast.LENGTH_SHORT).show();
+
+		//when user stop recording store recorded data
+		if(isRecord) saveLogData();
 	}
 
 	@Override

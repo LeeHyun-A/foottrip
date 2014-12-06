@@ -45,7 +45,8 @@
             android:id="@+id/password"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:hint="Password" />
+            android:hint="Password" 
+            android:password="true"/>
     </LinearLayout>
 
     <Button

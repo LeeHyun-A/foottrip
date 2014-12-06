@@ -2,28 +2,29 @@ package com.example.trip;
 
 
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RemoteViews;
+import android.widget.Toast;
+
+import com.example.trip.RecordModel.DataSet;
 
 public class StartTab extends Fragment implements OnClickListener {
 
@@ -31,6 +32,7 @@ public class StartTab extends Fragment implements OnClickListener {
 	private View rootView;
 	private Context mContext;
 
+	private Button btn;
 
 
 
@@ -39,12 +41,14 @@ public class StartTab extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.starttab, container, false);
 		//
 		mContext = rootView.getContext();
-		
+
 
 
 
 		start = (Button)rootView.findViewById(R.id.start);	
 		start.setOnClickListener(this);
+		btn = (Button)rootView.findViewById(R.id.button1);
+		btn.setOnClickListener(this);
 
 
 		ImageView img = (ImageView)rootView.findViewById(R.id.run);
@@ -108,32 +112,129 @@ public class StartTab extends Fragment implements OnClickListener {
 	}
 
 
-	
+
 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
-		chkGpsService();
+		if(v.getId() == start.getId()){
+			chkGpsService();
 
-		//chkgpservice함수를 불러 gps를 키게 만들고 gps가 켜져있을 경우레만 start버튼을 클릭하였을 때 서비스가 실행되게 한다.
-		String gps = android.provider.Settings.Secure.getString(mContext.getContentResolver(), android.provider.Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-		if (!(gps.matches(".*gps.*") && gps.matches(".*network.*"))) {}
-		else{
-			getActivity().startService(new Intent(getActivity(),FusedLocationService.class));
+			//chkgpservice함수를 불러 gps를 키게 만들고 gps가 켜져있을 경우레만 start버튼을 클릭하였을 때 서비스가 실행되게 한다.
+			String gps = android.provider.Settings.Secure.getString(mContext.getContentResolver(), android.provider.Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+			if (!(gps.matches(".*gps.*") && gps.matches(".*network.*"))) {}
+			else{
+				getActivity().startService(new Intent(getActivity(),FusedLocationService.class));
 
 
-			StopTab.setStartTimer(-1);
-			//탭 내에서  다른 프레그먼트로 교체하는 방법.(activity와는 조금 다름)
-			Fragment mFragment = new StopTab();
-			FragmentTransaction ft = getFragmentManager().beginTransaction();
-			//첫번째탭에 listener를 set해준다.
-			getActivity().getActionBar().getTabAt(0).setTabListener(new TabListener(mFragment));
-			//Replacing using the id of the container and not the fragment itself
-			ft.replace(R.id.tabparent, mFragment);
-			ft.addToBackStack(null);//프로젝트명 뭐임
-			ft.commit();
+				StopTab.setStartTimer(-1);
+				//탭 내에서  다른 프레그먼트로 교체하는 방법.(activity와는 조금 다름)
+				Fragment mFragment = new StopTab();
+				FragmentTransaction ft = getFragmentManager().beginTransaction();
+				//첫번째탭에 listener를 set해준다.
+				getActivity().getActionBar().getTabAt(0).setTabListener(new TabListener(mFragment));
+				//Replacing using the id of the container and not the fragment itself
+				ft.replace(R.id.tabparent, mFragment);
+				ft.addToBackStack(null);//프로젝트명 뭐임
+				ft.commit();
 
+			}
+		}
+		else if(v.getId() == btn.getId()){
+			final String[] items = getRecordFileNames();
+			if(items != null){ 
+				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+				builder.setTitle("Make your selection");
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						// Do something with the selection
+						readDataWithList(items[item]);
+						//					Toast.makeText(getApplicationContext(), items[item], Toast.LENGTH_LONG).show();
+					}
+				});
+				AlertDialog alert = builder.create();
+				alert.show();
+			}else{
+				Toast.makeText(getActivity(), "파일 생성 안함", Toast.LENGTH_LONG).show();
+			}
+
+		}
+	}
+	public String[] getRecordFileNames(){
+		// gets the files in the directory
+		File fileDirectory = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/FOOTTRIP/");
+		// lists all the files into an array
+		File[] dirFiles = fileDirectory.listFiles();
+
+		String[] datStr = null;
+		if(dirFiles == null) return null;
+		if (dirFiles.length != 0) {
+			datStr = new String[dirFiles.length];
+			// loops through the array of files, outputing the name to console
+			for (int ii = 0; ii < dirFiles.length; ii++) {
+				//String fileOutput = dirFiles[ii].toString();
+				datStr[ii] = dirFiles[ii].getName().split("/FOOTTRIP/")[0];
+			}
+		}
+		return datStr;
+	}
+	public void readDataWithList(String fileName){
+		String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file  = new File(deviceIndependentRootAddress + "/FOOTTRIP");
+
+		Log.d("errorTest",""+file.exists());
+		if(file.exists()){
+			try {						
+				FileInputStream fos = new FileInputStream (deviceIndependentRootAddress + "/FOOTTRIP/"+fileName);
+
+				ObjectInputStream objectin = new ObjectInputStream(fos);
+				RecordModel RM = new RecordModel();
+
+				RM = (RecordModel)objectin.readObject();
+				String str = "";
+				for(int i=0;i<RM.getPhotoLists().size();i++){
+					DataSet ds = RM.getPhotoLists().get(i);
+//					Log.d("file address", ""+ds.getPath());
+//					Log.d("position",""+ds.getGps());
+//					Log.d("time",""+ds.getTimeByStr());
+
+					str += "Photo File #"+(i+1) +
+							"\nfile address: "+ ds.getPath() +
+							"\nposition: "+ ds.getGps() + 
+							"\ntime: "+ ds.getTimeByStr() + "\n";
+				}
+				for(int i=0;i<RM.getVideoLists().size();i++){
+					DataSet ds = RM.getVideoLists().get(i);
+//					Log.d("file address", ""+ds.getPath());
+//					Log.d("position",""+ds.getGps());
+//					Log.d("time",""+ds.getTimeByStr());
+
+					str += "***\nVideo File #"+(i+1) +
+							"\nfile address: "+ ds.getPath() +
+							"\nposition: "+ ds.getGps() + 
+							"\ntime: "+ ds.getTimeByStr() + "\n";
+				}
+				for(int i=0;i<RM.getVoiceLists().size();i++){
+					DataSet ds = RM.getVoiceLists().get(i);
+//					Log.d("file address", ""+ds.getPath());
+//					Log.d("position",""+ds.getGps());
+//					Log.d("time",""+ds.getTimeByStr());
+
+					str += "***\nVoice File #"+(i+1) +
+							"\nfile address: "+ ds.getPath() +
+							"\nposition: "+ ds.getGps() + 
+							"\ntime: "+ ds.getTimeByStr() + "\n";
+				}
+				
+				Log.d("read file test", str);
+				Toast.makeText(rootView.getContext(), str, Toast.LENGTH_LONG).show();
+				
+				fos.close();
+				objectin.close();
+			}catch (Exception e) { // TODO: handle exception
+				Log.e("File error #2", e.getMessage());
+			}
 		}
 	}
 

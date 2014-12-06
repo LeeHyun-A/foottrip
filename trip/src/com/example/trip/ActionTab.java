@@ -39,27 +39,30 @@ public class ActionTab extends ActionBarActivity {
 
 		//firstTab
 		//newTab을 하면 탭의 개수를 늘릴 수 있다. setText를 이용해 탭의 이름을 정해준다.
-		firstTab = ab.newTab().setText("Tab1");
+		firstTab = ab.newTab().setText("");
 		Fragment frag = new StartTab();//이런식으로 내가 만든 fragment를 넣을 수 있다.
-		firstTab.setTabListener(new TabListener(frag));
+		firstTab.setTabListener(new TabListener(frag)); 
 		ab.addTab(firstTab);//마지막에 tab을 추가 해줘야 한다.
-
+		firstTab.setIcon(R.drawable.ic_launcher);//set image to tab?
+		
 		//secondTab
 		//		secondTab = ab.newTab().setText("Tab2");
 		//		frag = TabFragment.newInstance("Tab2");
 		//		secondTab.setTabListener(new TabListener(frag));
 		//		ab.addTab(secondTab);
 		///webview
-		secondTab = ab.newTab().setText("Tab2");
+		secondTab = ab.newTab().setText("");
 		Fragment frag2 = new ttt();
 		secondTab.setTabListener(new TabListener(frag2));
 		ab.addTab(secondTab);
+		secondTab.setIcon(R.drawable.ic_launcher);
 		
 		//third tab for log list
-		thirdTab = ab.newTab().setText("Tab3");
+		thirdTab = ab.newTab().setText("");
 		Fragment frag3 = new ListTmp();
 		thirdTab.setTabListener(new TabListener(frag3));
 		ab.addTab(thirdTab);
+		thirdTab.setIcon(R.drawable.ic_launcher);
 		
 
 

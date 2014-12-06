@@ -1,6 +1,9 @@
 package com.example.trip;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -9,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -23,6 +28,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -70,7 +76,7 @@ public class MapActivity extends FragmentActivity {
 		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
 
-		
+
 		SharedPreferences pref = getSharedPreferences("pref", Context.MODE_PRIVATE);
 		int state = pref.getInt("STATE", 0);
 		if(state == 0){//from service
@@ -122,7 +128,39 @@ public class MapActivity extends FragmentActivity {
 			prevAvg();
 			init();
 		}
-		
+
+
+//		mGoogleMap.snapshot(new SnapshotReadyCallback() {
+//
+//
+//			@Override
+//			public void onSnapshotReady(Bitmap snapshot) {
+//				if (snapshot == null)
+//					Toast.makeText(getBaseContext(), "null", Toast.LENGTH_SHORT).show();
+//				else {
+//					File fileCacheItem = new File("/sdcard/1.png");
+//					OutputStream out = null;
+//					try {
+//						fileCacheItem.createNewFile();
+//						out = new FileOutputStream(fileCacheItem);
+//						snapshot.compress(CompressFormat.JPEG, 100, out);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					} finally {
+//						try {
+//							out.close();
+//							Toast.makeText(getBaseContext(), "saved.", 
+//									Toast.LENGTH_SHORT).show();
+//						} catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		});
+//
+//
+
 	}
 	//튄 값을  제거하는 함수
 	private void deleteNoise(){//평균화 하는 것 하지 않을 때 coo->coo2
@@ -220,7 +258,7 @@ public class MapActivity extends FragmentActivity {
 						* (c40 + c50 * c33 * (-1 + 2 * c40 * c40)));
 		double c54 = c16 * c43 * (Math.atan(c35) - c47);
 		// return distance in meter
-				return c54;
+		return c54;
 	}
 
 	private void prevAvg() {
@@ -266,11 +304,11 @@ public class MapActivity extends FragmentActivity {
 				String city = addresses.get(0).getAddressLine(1);
 				String country = addresses.get(0).getAddressLine(2);
 				///////////////////////
-//				Log.i("address", address);//주소
-//				Log.i("locality", addresses.get(0).getLocality());//성남시
-//				Log.i(".getThoroughfare()", addresses.get(0).getThoroughfare());//수진동, 산성대로
-//				Log.i(".getFeatureName()", addresses.get(0).getFeatureName());//번지, 상세주소
-//				Log.i("getSubThoroughfare ()", addresses.get(0).getSubThoroughfare ());//번지, 사아세주소
+				//				Log.i("address", address);//주소
+				//				Log.i("locality", addresses.get(0).getLocality());//성남시
+				//				Log.i(".getThoroughfare()", addresses.get(0).getThoroughfare());//수진동, 산성대로
+				//				Log.i(".getFeatureName()", addresses.get(0).getFeatureName());//번지, 상세주소
+				//				Log.i("getSubThoroughfare ()", addresses.get(0).getSubThoroughfare ());//번지, 사아세주소
 				///////////////////////////////
 
 
@@ -307,8 +345,8 @@ public class MapActivity extends FragmentActivity {
 		Log.d("QQQ", position.latitude+" : " +position.longitude);
 		GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapActivity.this);
 
-//		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
-//				.findFragmentById(R.id.map)).getMap();
+		//		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
+		//				.findFragmentById(R.id.map)).getMap();
 
 		mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
 
@@ -350,11 +388,11 @@ public class MapActivity extends FragmentActivity {
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    // Inflate the menu items for use in the action bar
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.save, menu);
-	    return super.onCreateOptionsMenu(menu);
+		// Inflate the menu items for use in the action bar
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.save, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
- 
+
 }
 
