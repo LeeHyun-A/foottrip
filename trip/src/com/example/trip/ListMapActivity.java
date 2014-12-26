@@ -77,13 +77,14 @@ public class ListMapActivity extends FragmentActivity {
 		// ---get all contacts---
 		db.open();
 		Cursor c = db.getContact(Long.parseLong(pref.getString("INDEX", "0")));
-		Log.e("cursor", c.getString(1));
+		Log.e("lat", c.getString(1));
+		Log.e("lng", c.getString(2));
 		//DisplayContact(c); 
 		String str1[] = c.getString(1).split(",");
 		String str2[] = c.getString(2).split(",");
-		Log.e("STR1-len", Integer.toString(str1.length));
+//		Log.e("STR1-len", Integer.toString(str1.length));
 		double s = Double.parseDouble(str1[0]);
-		Log.e("S", Double.toString(s));
+//		Log.e("S", Double.toString(s));
 
 		///////////////평균화하는 것 하지 않을 때 : coo -> coo2
 		coo = new ArrayList<Coordinate>();

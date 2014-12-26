@@ -93,7 +93,7 @@ public class JoinActivity extends Activity implements OnClickListener {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		//request respond
 		try {
-			String url = "http://192.9.83.229:8089/footrip/login";
+			String url = "http://192.9.83.209:8089/footrip/login";
 			HttpPost post = new HttpPost(url);
 
 			List<NameValuePair> p = new ArrayList<NameValuePair>();

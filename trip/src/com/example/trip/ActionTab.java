@@ -43,8 +43,8 @@ public class ActionTab extends ActionBarActivity {
 		Fragment frag = new StartTab();//이런식으로 내가 만든 fragment를 넣을 수 있다.
 		firstTab.setTabListener(new TabListener(frag)); 
 		ab.addTab(firstTab);//마지막에 tab을 추가 해줘야 한다.
-		firstTab.setIcon(R.drawable.ic_launcher);//set image to tab?
-		
+		firstTab.setIcon(R.drawable.start);//set image to tab?
+//		firstTab.setCustomView(R.layout.view_tab_start);
 		//secondTab
 		//		secondTab = ab.newTab().setText("Tab2");
 		//		frag = TabFragment.newInstance("Tab2");
@@ -52,17 +52,17 @@ public class ActionTab extends ActionBarActivity {
 		//		ab.addTab(secondTab);
 		///webview
 		secondTab = ab.newTab().setText("");
-		Fragment frag2 = new ttt();
+		Fragment frag2 = new SnsView();
 		secondTab.setTabListener(new TabListener(frag2));
 		ab.addTab(secondTab);
-		secondTab.setIcon(R.drawable.ic_launcher);
+		secondTab.setIcon(R.drawable.newsfeed);
 		
 		//third tab for log list
 		thirdTab = ab.newTab().setText("");
 		Fragment frag3 = new ListTmp();
 		thirdTab.setTabListener(new TabListener(frag3));
 		ab.addTab(thirdTab);
-		thirdTab.setIcon(R.drawable.ic_launcher);
+		thirdTab.setIcon(R.drawable.map);
 		
 
 

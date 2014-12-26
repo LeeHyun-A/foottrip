@@ -139,6 +139,7 @@ public class StartTab extends Fragment implements OnClickListener {
 				ft.addToBackStack(null);//프로젝트명 뭐임
 				ft.commit();
 
+				getActivity().finish();
 			}
 		}
 		else if(v.getId() == btn.getId()){

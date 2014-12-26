@@ -142,8 +142,9 @@ public class StopTab extends Fragment implements OnClickListener{
 				db.close();          
 			}
 			/*저장하기 위한 화면.map띄워주는 것.*/
-			//	         Intent map=new Intent(getActivity(), MapActivity.class);
-			//	         startActivity(map);
+//			Log.d("pressstop","here");
+//				         Intent map=new Intent(getActivity(), MapActivity.class);
+//				         startActivity(map);
 
 			/**	         탭 내에서  다른 프레그먼트로 교체하는 방법.(activity와 조금 다름)
 			 *	         스타트 화면으로  바꿔줌.         

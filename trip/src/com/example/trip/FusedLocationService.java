@@ -63,7 +63,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 	private boolean isRecord = false;
 	//to indicate file path data(for test, will remove) 이변수랑 관련된 모든건 테스트용임
 	private String selectedFilePath = "입력된 파일 정보 없음.";
-		
+	private Location location;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -177,7 +177,10 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 
 				if (event == FileObserver.CREATE) {
 					//Detecting write operation of camera file
-					Location latlng = getLastBestStaleLocation();
+					Log.i("service-", "hhh");
+//					Location latlng = getLastBestStaleLocation();
+					Location latlng = location;
+					Log.i("service-", latlng.toString());
 					String latLongString= "Lat:" + latlng.getLatitude() + "\nLong:" + latlng.getLongitude();
 					gpsVal =  latLongString;
 					Log.d("path",file);
@@ -192,7 +195,10 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 					selectedFilePath = filePath + "\n" +"�쐞移�: " + gpsVal; 
 				}else if (event == FileObserver.MOVED_TO) {
 					//Detecting write operation of voice file
-					Location latlng = getLastBestStaleLocation();
+					Log.i("service-", "hhh2");
+//					Location latlng = getLastBestStaleLocation();
+					Location latlng = location;
+					Log.i("service-2", latlng.toString());
 					String latLongString= "Lat:" + latlng.getLatitude() + "\nLong:" + latlng.getLongitude();
 					gpsVal =  latLongString;
 					Log.d("path",file);
@@ -227,7 +233,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 		//Write file in the FOOTTRIP
 		try {
 			Date dt = new Date();
-			String dateInfo = ""+toStr(dt.getYear()-100)+toStr(dt.getMonth())+toStr(dt.getDate())+"_"+toStr(dt.getHours())+toStr(dt.getMinutes())+toStr(dt.getSeconds());
+			String dateInfo = ""+toStr(dt.getYear()-100)+toStr(dt.getMonth()+1 )+toStr(dt.getDate())+"_"+toStr(dt.getHours())+toStr(dt.getMinutes())+toStr(dt.getSeconds());
 
 			fos = new FileOutputStream(deviceIndependentRootAddress + "/FOOTTRIP/LogList"+dateInfo+".dat");
 
@@ -296,6 +302,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.loca
 		synchronized (locking){
 			Log.d("FusedLocationService", "Location received successfully ["+location.getLatitude()+","+location.getLongitude()+"] in "+(Long.valueOf(System.currentTimeMillis()-now))+" ms");
 
+			//
+			this.location = location;
+			//
 			handler.removeCallbacks(onFusedLocationProviderTimeout);
 			
 			

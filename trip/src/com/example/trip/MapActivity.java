@@ -104,7 +104,9 @@ public class MapActivity extends FragmentActivity {
 			// ---get all contacts---
 			db.open();
 			Cursor c = db.getContact(Long.parseLong(pref.getString("INDEX", "0")));
-			Log.e("cursor", c.getString(1));
+			Log.e("lat", c.getString(1));
+			Log.e("lng", c.getString(2));
+			
 			//DisplayContact(c); 
 			String str1[] = c.getString(1).split(",");
 			String str2[] = c.getString(2).split(",");
@@ -135,10 +137,20 @@ public class MapActivity extends FragmentActivity {
 //
 //			@Override
 //			public void onSnapshotReady(Bitmap snapshot) {
+//				Log.d("snapshotTest","here");
 //				if (snapshot == null)
 //					Toast.makeText(getBaseContext(), "null", Toast.LENGTH_SHORT).show();
 //				else {
-//					File fileCacheItem = new File("/sdcard/1.png");
+//					
+//					String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+//					File fileCacheItem  = new File(deviceIndependentRootAddress + "/LOG/1.png");
+//					Log.d("tests", "save start");
+//					if(!fileCacheItem.exists()){
+//						fileCacheItem.mkdir(); 
+//						Log.d("mkdir","make directory");
+//					}
+//
+////					File fileCacheItem = new File("/sdcard/1.png");
 //					OutputStream out = null;
 //					try {
 //						fileCacheItem.createNewFile();
@@ -149,8 +161,7 @@ public class MapActivity extends FragmentActivity {
 //					} finally {
 //						try {
 //							out.close();
-//							Toast.makeText(getBaseContext(), "saved.", 
-//									Toast.LENGTH_SHORT).show();
+//							Toast.makeText(getBaseContext(), "saved.", Toast.LENGTH_SHORT).show();
 //						} catch (IOException e) {
 //							e.printStackTrace();
 //						}
@@ -159,7 +170,8 @@ public class MapActivity extends FragmentActivity {
 //			}
 //		});
 //
-//
+		Log.d("call Map Act","statestate: "+state);
+
 
 	}
 	//튄 값을  제거하는 함수
