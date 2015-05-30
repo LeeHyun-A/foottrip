@@ -1,50 +1,29 @@
 package com.example.trip;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
+import net.codejava.server.FootTripCommunication;
+import net.codejava.server.FootTripJSONBuilder;
+import request.codeJava.client.RequestMethods;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class JoinActivity extends Activity implements OnClickListener {
-
-
 	private Button join;
 	private EditText email, password, firstname, lastname;
 	int join_state = -1;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//½Ã°è¸¸³ÀµÎ°í Å¸ÀÌÆ²¹Ù ¾ø¾Ö´Â °Í.
+		//ï¿½Ã°è¸¸ï¿½ï¿½ï¿½Î°ï¿½ Å¸ï¿½ï¿½Æ²ï¿½ï¿½ ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½.
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.join);
 
@@ -55,9 +34,6 @@ public class JoinActivity extends Activity implements OnClickListener {
 		password = (EditText)findViewById(R.id.password);
 		
 		join.setOnClickListener(this);
-		
-		
-		
 	}
 
 
@@ -66,15 +42,15 @@ public class JoinActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 
 		if (v.getId() == join.getId()) {
-			//ÀÌ¸ÞÀÏ ÀÎÁõ
-			// ÀÌ¸ÞÀÏ Àü¼Û
+			//ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			// ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			// String e= "mailto:"+emailaddress.getText().toString();
 			// Intent myActivity2 = new Intent(Intent.ACTION_SENDTO,
 			// Uri.parse(e));
 			// startActivity(myActivity2);
 			
 			
-			//¼­¹ö Àü¼Û.
+			//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 			sendServer();
 			if(join_state == 1){//success join-> login
 				AlertDialog dialBox = joinDialog("Welcome Foottrip~!");
@@ -89,46 +65,18 @@ public class JoinActivity extends Activity implements OnClickListener {
 
 	}
 	public void sendServer(){
-		
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		//request respond
-		try {
-			String url = "http://192.9.83.209:8089/footrip/login";
-			HttpPost post = new HttpPost(url);
+		//get server db_id db_password
+		String responseString = RequestMethods.joinRequest(email.getText().toString(), password.getText().toString(), firstname.getText().toString(), lastname.getText().toString(), null);
 
-			List<NameValuePair> p = new ArrayList<NameValuePair>();
-			p.add(new BasicNameValuePair("join", "user-data"));
-			p.add(new BasicNameValuePair("E-mail", email.getText().toString()));
-			p.add(new BasicNameValuePair("user_password", password.getText().toString()));
-			p.add(new BasicNameValuePair("first_name", firstname.getText().toString()));
-			p.add(new BasicNameValuePair("last-name", lastname.getText().toString()));
-			UrlEncodedFormEntity ent = new UrlEncodedFormEntity(p,HTTP.UTF_8);
-			post.setEntity(ent);
-			HttpResponse responsePOST = httpClient.execute(post);  
-			HttpEntity resEntity = responsePOST.getEntity();
+		System.out.println(responseString);
 
-			String responseString = EntityUtils.toString(resEntity, "UTF-8");
-			System.out.println(responseString);
-			//[{"accessable":"ack","join":"join-respond"}]
-			responseString = responseString.substring(2, responseString.length() - 2);//remove []
-			String list[] = responseString.split(",");
-			HashMap<String, String> hm = new HashMap<String, String>();
-			for(int i = 0; i < list.length; i++){
-				String keyVal[] = list[i].split(":");//"key" "val"
-				hm.put(keyVal[0].substring(1,keyVal[0].length()-1), keyVal[1].substring(1,keyVal[1].length()-1));
-			}
-			
-			if(hm.get("accessable").equals("ack")){
-				//if ack -> login ¼­¹ö¿¡ id password°¡ Á¦´ë·Î µÅÀÖÀ» °æ¿ì.
-				join_state = 1;
-			}
-			// handle response here...
-		}catch (Exception ex) {
-			// handle exception here
-		} finally {
-			httpClient.getConnectionManager().shutdown();
+		//Handle response here...
+		//Interpret JSON response
+		HashMap<String, String> responseMap = FootTripJSONBuilder.jsonParser(responseString);
+		if(responseMap.get("accessable").equals("ack")){
+			//If 'Ack', then login and store id & password in android SharedPreference.
+			join_state = 1;
 		}
-		
 	}
 	private AlertDialog joinDialog(String str){
 		AlertDialog myQuittingDialogBox =

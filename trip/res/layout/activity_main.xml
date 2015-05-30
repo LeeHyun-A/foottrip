@@ -6,14 +6,12 @@
     android:background="@drawable/trip"
     android:orientation="vertical" >
 
-    
-
     <TextView
         android:id="@+id/logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="100dp"
         android:gravity="center_horizontal"
         android:text="Foot trip"
         android:textColor="#ffffff"
@@ -31,25 +29,28 @@
             android:id="@+id/email"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:hint="E-mail" />
+            android:hint="E-mail"
+            android:lines="1" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:hint="Password" 
-            android:password="true"/>
+            android:hint="Password"
+            android:lines="1"
+            android:password="true" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_gravity="center"
         android:background="@drawable/blue_corner" >
 
         <Button
             android:id="@+id/login"
-            android:layout_width="200dp"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="#00000000"
@@ -58,21 +59,34 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" >
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp" >
+
+        <com.facebook.widget.LoginButton
+            android:id="@+id/authButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/corner" >
 
         <Button
             android:id="@+id/sign"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="#00000000"
-            android:gravity="bottom|center_vertical|center_horizontal"
             android:text="Sign"
             android:textColor="#ffffff" />
-
     </LinearLayout>
 
 </LinearLayout>

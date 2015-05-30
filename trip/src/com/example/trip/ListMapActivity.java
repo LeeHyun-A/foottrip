@@ -1,5 +1,7 @@
 package com.example.trip;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +11,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -35,7 +36,7 @@ public class ListMapActivity extends FragmentActivity {
 	GoogleMap mGoogleMap;
 	Marker marker;
 	private int count;
-	private double testDist = 35;//10√ ø° 35
+	private double testDist = 35;
 	ArrayList<Coordinate> coo;
 	ArrayList<Coordinate> coo2;
 
@@ -66,7 +67,7 @@ public class ListMapActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listmapview);
 
-		// ∏∂ƒø
+		// ÔøΩÔøΩƒø
 		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
 
@@ -86,7 +87,7 @@ public class ListMapActivity extends FragmentActivity {
 		double s = Double.parseDouble(str1[0]);
 //		Log.e("S", Double.toString(s));
 
-		///////////////∆Ú±’»≠«œ¥¬ ∞Õ «œ¡ˆ æ ¿ª ∂ß : coo -> coo2
+		///////////////ÔøΩÔøΩÔøΩ»≠ÔøΩœ¥ÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ : coo -> coo2
 		coo = new ArrayList<Coordinate>();
 		for(int i=0;i<str1.length;i++){
 			Log.e("FOR", str1[i]);
@@ -96,26 +97,26 @@ public class ListMapActivity extends FragmentActivity {
 			coo.add(c1);
 			Log.e("FOR-STR", Double.toString(coo.get(i).getLat()));
 		}
-		////πÿ¿« ≥Î¿Ã¡Ó∏¶ ¡¶∞≈«œ¥¬ «‘ºˆ∏¶ ∫Œ∏£±‚ ¿¸ø°, ¡§∏ª Ωﬂ∂◊∏¬∞‘ ∞™¿Ã ∂≥æÓ¡Æ ¿÷¥¬ ∞Õ ¡¶∞≈«ÿæﬂ «—¥Ÿ. ¡¬«• ªÁ¿Ã¿« ∞≈∏Æ∞° ∏Ó ≈∞∑ŒπÃ≈Õ ¿ÃªÛ¿Œ ∞Õ ¡¶∞≈.
+		////ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÓ∏¶ ÔøΩÔøΩÔøΩÔøΩÔøΩœ¥ÔøΩ ÔøΩ‘ºÔøΩÔøΩÔøΩ ÔøΩŒ∏ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ, ÔøΩÔøΩÔøΩÔøΩ ÔøΩﬂ∂◊∏¬∞ÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ÷¥ÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÿæÔøΩ ÔøΩ—¥ÔøΩ. ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩ≈∏ÔøΩÔøΩÔøΩ ÔøΩÔøΩ ≈∞ÔøΩŒπÔøΩÔøΩÔøΩ ÔøΩÃªÔøΩÔøΩÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ.
 
 		deleteNoise();
 		prevAvg();
 		init();
-
+		//CaptureMapScreen();
 
 	}
-	//∆§ ∞™¿ª  ¡¶∞≈«œ¥¬ «‘ºˆ
-	private void deleteNoise(){//∆Ú±’»≠ «œ¥¬ ∞Õ «œ¡ˆ æ ¿ª ∂ß coo->coo2
+	//∆§ ÔøΩÔøΩÔøΩÔøΩ  ÔøΩÔøΩÔøΩÔøΩÔøΩœ¥ÔøΩ ÔøΩ‘ºÔøΩ
+	private void deleteNoise(){//ÔøΩÔøΩÔøΩ»≠ ÔøΩœ¥ÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ coo->coo2
 		for(int i = 0;i < coo.size() - 1; i++){
-			//√≥¿Ω ¡¬«•¿œ ∞ÊøÏ, √ππ¯¬∞ ¡¬«• ¡¶∞≈
-			//µŒπ¯¬∞∞° ∏∂¡ˆ∏∑ ¡¬«•¿œ ∞ÊøÏ, µŒπ¯ ¬∞ ¡¬«• ¡¶∞≈
-			//else, ¿ß¿« µŒ ∞ÊøÏ ¡¶ø‹«— ≥™∏”¡ˆ ∞ÊøÏ. -> ∆˜πÆ¿Ã 0∫Œ≈Õ µπ±‚ ∂ßπÆø° µ⁄¿« ¡¬«•∏¶ ¡¶∞≈«œ∞Ì ∑Á«¡∏¶ ¥ŸΩ√ µ∑¥Ÿ.(∞∞¿∫ ¿Œµ¶Ω∫ ¥ŸΩ√ «—π¯ »Æ¿Œ. µ⁄¿« ¡¬«• ¡¶∞≈«ﬂ±‚ ∂ßπÆø°)
+			//√≥ÔøΩÔøΩ ÔøΩÔøΩ«•ÔøΩÔøΩ ÔøΩÔøΩÔøΩ, √πÔøΩÔøΩ¬∞ ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩ
+			//ÔøΩŒπÔøΩ¬∞ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«•ÔøΩÔøΩ ÔøΩÔøΩÔøΩ, ÔøΩŒπÔøΩ ¬∞ ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩ
+			//else, ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩ. -> ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ 0ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«•ÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩœ∞ÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩŸΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ.(ÔøΩÔøΩÔøΩÔøΩ ÔøΩŒµÔøΩÔøΩÔøΩ ÔøΩŸΩÔøΩ ÔøΩ—πÔøΩ »ÆÔøΩÔøΩ. ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩÔøΩﬂ±ÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ)
 			double dist = distance(coo.get(i).getLat(), coo.get(i).getLng(), coo.get(i+1).getLat(), coo.get(i).getLng());
-			if(dist > testDist){//√÷∞Ìº”µµ : 10√ ø° 35m   1∫–ø° 333πÃ≈Õ  Ω√º” 20km
-				if(i == 0){//∏∏æ‡ √≥¿Ω ¡¬«• µŒ∞≥¿« ∞£∞›¿œ ∞ÊøÏ. √ππ¯¬∞ ¡¬«• ¡¶∞≈.
+			if(dist > testDist){//ÔøΩ÷∞ÔøΩ”µÔøΩ : 10ÔøΩ øÔøΩ 35m   1ÔøΩ–øÔøΩ 333ÔøΩÔøΩÔøΩÔøΩ  ÔøΩ√ºÔøΩ 20km
+				if(i == 0){//ÔøΩÔøΩÔøΩÔøΩ √≥ÔøΩÔøΩ ÔøΩÔøΩ«• ÔøΩŒ∞ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩ. √πÔøΩÔøΩ¬∞ ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩ.
 					coo.remove(i);
 				}
-				else if((i+1) == (coo.size()-1)){//∏∏æ‡ ∏∂¡ˆ∏∑ ¡¬«• µŒ∞≥¿« ∞£∞›¿œ ∞ÊøÏ. ∏∂¡ˆ∏∑ ¡¬«• ¡¶∞≈.
+				else if((i+1) == (coo.size()-1)){//ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«• ÔøΩŒ∞ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩ. ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«• ÔøΩÔøΩÔøΩÔøΩ.
 					coo.remove(i+1);
 				}
 				else{
@@ -126,7 +127,7 @@ public class ListMapActivity extends FragmentActivity {
 			}
 		}
 	}
-	//∞≈∏Æ ±∏«œ¥¬ ∫Œ∫–
+	//ÔøΩ≈∏ÔøΩ ÔøΩÔøΩÔøΩœ¥ÔøΩ ÔøΩŒ∫ÔøΩ
 	public double distance(double P1_latitude, double P1_longitude,
 			double P2_latitude, double P2_longitude) {
 		if ((P1_latitude == P2_latitude) && (P1_longitude == P2_longitude)) {
@@ -136,7 +137,7 @@ public class ListMapActivity extends FragmentActivity {
 		double e11 = P1_longitude * Math.PI / 180;
 		double e12 = P2_latitude * Math.PI / 180;
 		double e13 = P2_longitude * Math.PI / 180;
-		/* ≈∏ø¯√º GRS80 */
+		/* ≈∏ÔøΩÔøΩ√º GRS80 */
 		double c16 = 6356752.314140910;
 		double c15 = 6378137.000000000;
 		double c17 = 0.0033528107;
@@ -261,12 +262,12 @@ public class ListMapActivity extends FragmentActivity {
 	private void init() {
 		/**@brief show marker with location**/
 
-		// ∏∂ƒø º≥¡§.
-		// ∏ ¿« ¡¬«•ø° ∏∂≈©∏¶ √ﬂ∞°«œ∞Ì, ∏∂ƒø title ≥ªøÎ¿Ã πŸ∑Œ ∫∏¿Ã∞‘ «’¥œ¥Ÿ.
+		// ÔøΩÔøΩƒø ÔøΩÔøΩÔøΩÔøΩ.
+		// ÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩ«•ÔøΩÔøΩ ÔøΩÔøΩ≈©ÔøΩÔøΩ ÔøΩﬂ∞ÔøΩÔøΩœ∞ÔøΩ, ÔøΩÔøΩƒø title ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩŸ∑ÔøΩ ÔøΩÔøΩÔøΩÃ∞ÔøΩ ÔøΩ’¥œ¥ÔøΩ.
 		//
-		// .position(position) = ∏∂ƒø∞° √ﬂ∞°µ«¥¬ ¡¬«•
-		// .title(title) = ∏∂ƒø¿« ¡¶∏Ò
-		// .showInfoWindow() = ∏∂ƒø¿« ¡¶∏Ò¿Ã πŸ∑Œ ∫∏¿Ã∞‘. (æ¯¿∏∏È ≈¨∏Ø«ﬂ¿ª∂ß ∏∂ƒø¿« ¡¶∏Ò¿Ã «•Ω√µ )
+		// .position(position) = ÔøΩÔøΩƒøÔøΩÔøΩ ÔøΩﬂ∞ÔøΩÔøΩ«¥ÔøΩ ÔøΩÔøΩ«•
+		// .title(title) = ÔøΩÔøΩƒøÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩ
+		// .showInfoWindow() = ÔøΩÔøΩƒøÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩŸ∑ÔøΩ ÔøΩÔøΩÔøΩÃ∞ÔøΩ. (ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ≈¨ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ ÔøΩÔøΩƒøÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩÔøΩ «•ÔøΩ√µÔøΩ)
 		// mGoogleMap.addMarker(new
 		// MarkerOptions().position(position).title(title)).showInfoWindow();
 		Intent getI = getIntent();
@@ -293,7 +294,7 @@ public class ListMapActivity extends FragmentActivity {
 			tmp+=" lat : "+coo2.get(i).getLat();
 			tmp+=" lng : "+coo2.get(i).getLng()+"\n";
 			if(position.latitude == 0 && position.longitude == 0){
-				//¡¬«•∞° πŸ¥Ÿ «—∞°øÓµ• ¬Ô»˜¥¬∞Õ¿ª πÊ¡ˆ«œ±‚ ¿ß«ÿ.√ ±‚»≠∞™.
+				//ÔøΩÔøΩ«•ÔøΩÔøΩ ÔøΩŸ¥ÔøΩ ÔøΩ—∞ÔøΩÔøΩÓµ• ÔøΩÔøΩÔøΩÔøΩÔøΩ¬∞ÔøΩÔøΩÔøΩ ÔøΩÔøΩÔøΩÔøΩÔøΩœ±ÔøΩ ÔøΩÔøΩÔøΩÔøΩ.ÔøΩ ±ÔøΩ»≠ÔøΩÔøΩ.
 				Log.d("position", "0,0");
 			}
 			else{
@@ -317,13 +318,49 @@ public class ListMapActivity extends FragmentActivity {
 			}
 		});
 	}
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu items for use in the action bar
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.save, menu);
-//		return super.onCreateOptionsMenu(menu);
-//	}
 
+
+	public void CaptureMapScreen() 
+	{
+		
+		final String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+		File file  = new File(deviceIndependentRootAddress + "/FOOTTRIP/LOG");
+		Log.d("tests", "save start");
+		if(!file.exists()){
+			file.mkdir(); 
+			Log.d("mkdir","make directory");
+		}
+
+	SnapshotReadyCallback callback = new SnapshotReadyCallback() {
+	            Bitmap bitmap;
+
+	            
+	            
+	            @Override
+	            public void onSnapshotReady(Bitmap snapshot) {
+	                // TODO Auto-generated method stub
+	                bitmap = snapshot;
+	                try {
+
+	                    FileOutputStream out = new FileOutputStream(deviceIndependentRootAddress + "/FOOTTRIP/LOG/"+ "MyMapScreen" + System.currentTimeMillis()
+	                        + ".png");
+
+	                    // above "/mnt ..... png" => is a storage path (where image will be stored) + name of image you can customize as per your Requirement
+
+	                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        };
+
+	        mGoogleMap.snapshot(callback);
+
+	        // myMap is object of GoogleMap +> GoogleMap myMap;
+	        // which is initialized in onCreate() => 
+	        // myMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_pass_home_call)).getMap();
+	}	
+	
+	
 }
 

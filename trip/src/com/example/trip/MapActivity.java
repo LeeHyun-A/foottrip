@@ -2,409 +2,166 @@ package com.example.trip;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.Date;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapActivity extends FragmentActivity {
-
+public class MapActivity extends FragmentActivity implements OnMapClickListener {
 	GoogleMap mGoogleMap;
-	Marker marker;
-	private int count;
-	private double testDist = 35;//10√ ø° 35
-	ArrayList<Coordinate> coo;
-	ArrayList<Coordinate> coo2;
-
-	private class Coordinate{
-		private Double lat;
-		private Double lng;
-		public Coordinate(double lat, double lng){
-			this.lat = lat;
-			this.lng = lng;
-		}
-		public Double getLat() {
-			return lat;
-		}
-		public void setLat(Double lat) {
-			this.lat = lat;
-		}
-		public Double getLng() {
-			return lng;
-		}
-		public void setLng(Double lng) {
-			this.lng = lng;
-		}
-
-	}
+	String LogImgName;
+	LatLngBounds mBound;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_activity);
+		setContentView(R.layout.activity_map);
 
-		// ∏∂ƒø
-		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map)).getMap();
+		String coo1[] = {"37.514993", "37.514108", "37.513845","37.512823","37.512074","37.511351"};
+		String coo2[] = {"127.015752", "127.015419", "127.015526", "127.015521","127.015585","127.015741"};
 
-
-		SharedPreferences pref = getSharedPreferences("pref", Context.MODE_PRIVATE);
-		int state = pref.getInt("STATE", 0);
-		if(state == 0){//from service
-			int count = pref.getInt("COUNT", 0);
-			Log.e("count_map", Integer.toString(count));
-			if(count != 0){
-
-				coo2 = new ArrayList<Coordinate>(count);
-				for(int i=0;i<count;i++){
-					/**@brief save the location received*/
-					Coordinate c = new Coordinate(Double.parseDouble(pref.getString("LAT"+(i+1),"0"))
-							, Double.parseDouble(pref.getString("LNG"+(i+1),"0")));
-					coo2.add(c);
-				}
-
-				init();
-			}
-			else {
-				Toast.makeText(getApplicationContext(), "count is zero", Toast.LENGTH_SHORT);
-			}
+		Bundle bund = getIntent().getExtras();
+		String tmpStr="";
+		if(bund!=null) {
+			LogImgName = bund.getString("ID_Key");
+			coo1 = bund.getStringArray("LAT");
+			coo2 = bund.getStringArray("LNG");
+			for(int i=0;i<coo1.length;i++)
+				tmpStr += coo1[i]+", "+coo2[i]+"\n";
 		}
-		else if(state == 1){//from sql
-			Log.d("<<MAP>>", "SQL");
-			DBAdapter db= new DBAdapter(getApplicationContext());
-			// ---get all contacts---
-			db.open();
-			Cursor c = db.getContact(Long.parseLong(pref.getString("INDEX", "0")));
-			Log.e("lat", c.getString(1));
-			Log.e("lng", c.getString(2));
-			
-			//DisplayContact(c); 
-			String str1[] = c.getString(1).split(",");
-			String str2[] = c.getString(2).split(",");
-			Log.e("STR1-len", Integer.toString(str1.length));
-			double s = Double.parseDouble(str1[0]);
-			Log.e("S", Double.toString(s));
+		Toast.makeText(getApplicationContext(), tmpStr, Toast.LENGTH_LONG).show();
+		init(coo1, coo2);
 
-			///////////////∆Ú±’»≠«œ¥¬ ∞Õ «œ¡ˆ æ ¿ª ∂ß : coo -> coo2
-			coo = new ArrayList<Coordinate>();
-			for(int i=0;i<str1.length;i++){
-				Log.e("FOR", str1[i]);
-				/**@brief save the location received*/
-				Coordinate c1 = new Coordinate(Double.parseDouble(str1[i])
-						, Double.parseDouble(str2[i]));
-				coo.add(c1);
-				Log.e("FOR-STR", Double.toString(coo.get(i).getLat()));
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				saveSnapshot();
 			}
-			////πÿ¿« ≥Î¿Ã¡Ó∏¶ ¡¶∞≈«œ¥¬ «‘ºˆ∏¶ ∫Œ∏£±‚ ¿¸ø°, ¡§∏ª Ωﬂ∂◊∏¬∞‘ ∞™¿Ã ∂≥æÓ¡Æ ¿÷¥¬ ∞Õ ¡¶∞≈«ÿæﬂ «—¥Ÿ. ¡¬«• ªÁ¿Ã¿« ∞≈∏Æ∞° ∏Ó ≈∞∑ŒπÃ≈Õ ¿ÃªÛ¿Œ ∞Õ ¡¶∞≈.
-
-			deleteNoise();
-			prevAvg();
-			init();
-		}
-
-
-//		mGoogleMap.snapshot(new SnapshotReadyCallback() {
-//
-//
-//			@Override
-//			public void onSnapshotReady(Bitmap snapshot) {
-//				Log.d("snapshotTest","here");
-//				if (snapshot == null)
-//					Toast.makeText(getBaseContext(), "null", Toast.LENGTH_SHORT).show();
-//				else {
-//					
-//					String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-//					File fileCacheItem  = new File(deviceIndependentRootAddress + "/LOG/1.png");
-//					Log.d("tests", "save start");
-//					if(!fileCacheItem.exists()){
-//						fileCacheItem.mkdir(); 
-//						Log.d("mkdir","make directory");
-//					}
-//
-////					File fileCacheItem = new File("/sdcard/1.png");
-//					OutputStream out = null;
-//					try {
-//						fileCacheItem.createNewFile();
-//						out = new FileOutputStream(fileCacheItem);
-//						snapshot.compress(CompressFormat.JPEG, 100, out);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					} finally {
-//						try {
-//							out.close();
-//							Toast.makeText(getBaseContext(), "saved.", Toast.LENGTH_SHORT).show();
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//			}
-//		});
-//
-		Log.d("call Map Act","statestate: "+state);
-
+		}, 5000);
 
 	}
-	//∆§ ∞™¿ª  ¡¶∞≈«œ¥¬ «‘ºˆ
-	private void deleteNoise(){//∆Ú±’»≠ «œ¥¬ ∞Õ «œ¡ˆ æ ¿ª ∂ß coo->coo2
-		for(int i = 0;i < coo.size() - 1; i++){
-			//√≥¿Ω ¡¬«•¿œ ∞ÊøÏ, √ππ¯¬∞ ¡¬«• ¡¶∞≈
-			//µŒπ¯¬∞∞° ∏∂¡ˆ∏∑ ¡¬«•¿œ ∞ÊøÏ, µŒπ¯ ¬∞ ¡¬«• ¡¶∞≈
-			//else, ¿ß¿« µŒ ∞ÊøÏ ¡¶ø‹«— ≥™∏”¡ˆ ∞ÊøÏ. -> ∆˜πÆ¿Ã 0∫Œ≈Õ µπ±‚ ∂ßπÆø° µ⁄¿« ¡¬«•∏¶ ¡¶∞≈«œ∞Ì ∑Á«¡∏¶ ¥ŸΩ√ µ∑¥Ÿ.(∞∞¿∫ ¿Œµ¶Ω∫ ¥ŸΩ√ «—π¯ »Æ¿Œ. µ⁄¿« ¡¬«• ¡¶∞≈«ﬂ±‚ ∂ßπÆø°)
-			double dist = distance(coo.get(i).getLat(), coo.get(i).getLng(), coo.get(i+1).getLat(), coo.get(i).getLng());
-			if(dist > testDist){//√÷∞Ìº”µµ : 10√ ø° 35m   1∫–ø° 333πÃ≈Õ  Ω√º” 20km
-				if(i == 0){//∏∏æ‡ √≥¿Ω ¡¬«• µŒ∞≥¿« ∞£∞›¿œ ∞ÊøÏ. √ππ¯¬∞ ¡¬«• ¡¶∞≈.
-					coo.remove(i);
+	public void saveSnapshot(){
+		SnapshotReadyCallback callback = new SnapshotReadyCallback() {
+			Bitmap bitmap;
+
+			@Override
+			public void onSnapshotReady(Bitmap snapshot) {
+				// TODO Auto-generated method stub
+				bitmap = snapshot;
+				try {
+					FileOutputStream out;
+					String deviceIndependentRootAddress = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+					File file  = new File(deviceIndependentRootAddress + "/FOOTTRIP/logimg");
+					Log.d("tests", "save start");
+					if(!file.exists()){
+						file.mkdir();
+						Log.d("mkdir","make directory");
+					}
+
+					out = new FileOutputStream(deviceIndependentRootAddress + "/FOOTTRIP/logimg/"+LogImgName+".png");
+
+					bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				else if((i+1) == (coo.size()-1)){//∏∏æ‡ ∏∂¡ˆ∏∑ ¡¬«• µŒ∞≥¿« ∞£∞›¿œ ∞ÊøÏ. ∏∂¡ˆ∏∑ ¡¬«• ¡¶∞≈.
-					coo.remove(i+1);
-				}
-				else{
-					coo.remove(i);
-				}
-				i--;
-				continue;								
 			}
-		}
-	}
-	//∞≈∏Æ ±∏«œ¥¬ ∫Œ∫–
-	public double distance(double P1_latitude, double P1_longitude,
-			double P2_latitude, double P2_longitude) {
-		if ((P1_latitude == P2_latitude) && (P1_longitude == P2_longitude)) {
-			return 0;
-		}
-		double e10 = P1_latitude * Math.PI / 180;
-		double e11 = P1_longitude * Math.PI / 180;
-		double e12 = P2_latitude * Math.PI / 180;
-		double e13 = P2_longitude * Math.PI / 180;
-		/* ≈∏ø¯√º GRS80 */
-		double c16 = 6356752.314140910;
-		double c15 = 6378137.000000000;
-		double c17 = 0.0033528107;
-		double f15 = c17 + c17 * c17;
-		double f16 = f15 / 2;
-		double f17 = c17 * c17 / 2;
-		double f18 = c17 * c17 / 8;
-		double f19 = c17 * c17 / 16;
-		double c18 = e13 - e11;
-		double c20 = (1 - c17) * Math.tan(e10);
-		double c21 = Math.atan(c20);
-		double c22 = Math.sin(c21);
-		double c23 = Math.cos(c21);
-		double c24 = (1 - c17) * Math.tan(e12);
-		double c25 = Math.atan(c24);
-		double c26 = Math.sin(c25);
-		double c27 = Math.cos(c25);
-		double c29 = c18;
-		double c31 = (c27 * Math.sin(c29) * c27 * Math.sin(c29))
-				+ (c23 * c26 - c22 * c27 * Math.cos(c29))
-				* (c23 * c26 - c22 * c27 * Math.cos(c29));
-		double c33 = (c22 * c26) + (c23 * c27 * Math.cos(c29));
-		double c35 = Math.sqrt(c31) / c33;
-		double c36 = Math.atan(c35);
-		double c38 = 0;
-		if (c31 == 0) {
-			c38 = 0;
-		} else {
-			c38 = c23 * c27 * Math.sin(c29) / Math.sqrt(c31);
-		}
-		double c40 = 0;
-		if ((Math.cos(Math.asin(c38)) * Math.cos(Math.asin(c38))) == 0) {
-			c40 = 0;
-		} else {
-			c40 = c33 - 2 * c22 * c26
-					/ (Math.cos(Math.asin(c38)) * Math.cos(Math.asin(c38)));
-		}
-		double c41 = Math.cos(Math.asin(c38)) * Math.cos(Math.asin(c38))
-				* (c15 * c15 - c16 * c16) / (c16 * c16);
-		double c43 = 1 + c41 / 16384
-				* (4096 + c41 * (-768 + c41 * (320 - 175 * c41)));
-		double c45 = c41 / 1024 * (256 + c41 * (-128 + c41 * (74 - 47 * c41)));
-		double c47 = c45
-				* Math.sqrt(c31)
-				* (c40 + c45
-						/ 4
-						* (c33 * (-1 + 2 * c40 * c40) - c45 / 6 * c40
-								* (-3 + 4 * c31) * (-3 + 4 * c40 * c40)));
-		double c50 = c17
-				/ 16
-				* Math.cos(Math.asin(c38))
-				* Math.cos(Math.asin(c38))
-				* (4 + c17
-						* (4 - 3 * Math.cos(Math.asin(c38))
-								* Math.cos(Math.asin(c38))));
-		double c52 = c18
-				+ (1 - c50)
-				* c17
-				* c38
-				* (Math.acos(c33) + c50 * Math.sin(Math.acos(c33))
-						* (c40 + c50 * c33 * (-1 + 2 * c40 * c40)));
-		double c54 = c16 * c43 * (Math.atan(c35) - c47);
-		// return distance in meter
-		return c54;
+		};
+
+		mGoogleMap.snapshot(callback);
+		//		finish();
 	}
 
-	private void prevAvg() {
-		// TODO Auto-generated method stub
-		double latTotal = 0, lngTotal = 0;
-		coo2 = new ArrayList<Coordinate>();
-		for(int i = 0 ;i < coo.size(); i++){
-			if(i == 0){
-				Coordinate c = new Coordinate(coo.get(i).getLat(), coo.get(i).getLng());
-				coo2.add(c);
-			}
-			else if(i == 1){
-				latTotal += coo.get(i).getLat() + coo.get(i-1).getLat();
-				lngTotal += coo.get(i).getLng() + coo.get(i-1).getLng();
+	public String toStr(int d){
+		if(d<10) return "0"+d;
+		return ""+d;
+	}
+	public void onMapClick(LatLng point) {
+		Point screenPt = mGoogleMap.getProjection().toScreenLocation(point);
 
-				Coordinate c = new Coordinate(latTotal/2.0, lngTotal/2.0);
-				coo2.add(c);
-			}
-			else if(i == 2){
-				latTotal += coo.get(i).getLat() + coo.get(i-1).getLat() + coo.get(i-2).getLat();
-				lngTotal += coo.get(i).getLng() + coo.get(i-1).getLng() + coo.get(i-2).getLng();
-
-				Coordinate c = new Coordinate(latTotal/3.0, lngTotal/3.0);
-				coo2.add(c);
-			}
-			else{
-				latTotal += coo.get(i).getLat() + coo.get(i-1).getLat() + coo.get(i-2).getLat() + coo.get(i-3).getLat();
-				lngTotal += coo.get(i).getLng() + coo.get(i-1).getLng() + coo.get(i-2).getLng() + coo.get(i-3).getLng();
-
-				Coordinate c = new Coordinate(latTotal/4.0, lngTotal/4.0);
-				coo2.add(c);
-			}
-			latTotal = lngTotal = 0;
-
-			Log.i("avg-coo", Double.toString(coo2.get(i).getLat())+","+Double.toString(coo2.get(i).getLng()));
-
-			Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-			List<Address> addresses;
-			try {
-				addresses = geocoder.getFromLocation(coo2.get(i).getLat(),coo2.get(i).getLng()	, 1);
-
-				String address = addresses.get(0).getAddressLine(0);
-				String city = addresses.get(0).getAddressLine(1);
-				String country = addresses.get(0).getAddressLine(2);
-				///////////////////////
-				//				Log.i("address", address);//¡÷º“
-				//				Log.i("locality", addresses.get(0).getLocality());//º∫≥≤Ω√
-				//				Log.i(".getThoroughfare()", addresses.get(0).getThoroughfare());//ºˆ¡¯µø, ªÍº∫¥Î∑Œ
-				//				Log.i(".getFeatureName()", addresses.get(0).getFeatureName());//π¯¡ˆ, ªÛºº¡÷º“
-				//				Log.i("getSubThoroughfare ()", addresses.get(0).getSubThoroughfare ());//π¯¡ˆ, ªÁæ∆ºº¡÷º“
-				///////////////////////////////
-
-
-
-
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-
+		Log.d("‚àè¬†¬°¬¨¬´‚Ä¢","¬°¬¨¬´‚Ä¢: ¬ø√ü¬µ¬µ(" + String.valueOf(point.latitude) + "), ‚àû√ä¬µ¬µ(" + String.valueOf(point.longitude) + ")");
+		Log.d("¬ª‚â†‚àè√à¬°¬¨¬´‚Ä¢","¬ª‚â†‚àè√à¬°¬¨¬´‚Ä¢: X(" + String.valueOf(screenPt.x) + "), Y(" + String.valueOf(screenPt.y) + ")");
 	}
 
+	private void init(String coo1[], String coo2[]) {
 
-
-	private void init() {
-		/**@brief show marker with location**/
-
-		// ∏∂ƒø º≥¡§.
-		// ∏ ¿« ¡¬«•ø° ∏∂≈©∏¶ √ﬂ∞°«œ∞Ì, ∏∂ƒø title ≥ªøÎ¿Ã πŸ∑Œ ∫∏¿Ã∞‘ «’¥œ¥Ÿ.
-		//
-		// .position(position) = ∏∂ƒø∞° √ﬂ∞°µ«¥¬ ¡¬«•
-		// .title(title) = ∏∂ƒø¿« ¡¶∏Ò
-		// .showInfoWindow() = ∏∂ƒø¿« ¡¶∏Ò¿Ã πŸ∑Œ ∫∏¿Ã∞‘. (æ¯¿∏∏È ≈¨∏Ø«ﬂ¿ª∂ß ∏∂ƒø¿« ¡¶∏Ò¿Ã «•Ω√µ )
-		// mGoogleMap.addMarker(new
-		// MarkerOptions().position(position).title(title)).showInfoWindow();
 		Intent getI = getIntent();
 
 		String title = getI.getStringExtra("title");
-		LatLng position = new LatLng(coo2.get(0).getLat(), coo2.get(0).getLng());
+		//		String coordinates[] = { "37.517180", "127.041268" };
 
-		Log.d("QQQ", position.latitude+" : " +position.longitude);
-		GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapActivity.this);
+		int minLat = Integer.MAX_VALUE;
+		int maxLat = Integer.MIN_VALUE;
+		int minLon = Integer.MAX_VALUE;
+		int maxLon = Integer.MIN_VALUE;
 
-		//		mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
-		//				.findFragmentById(R.id.map)).getMap();
+		//Variable for setting zoom level
+		LatLngBounds.Builder builder = LatLngBounds.builder();
+		LatLng old_point = null;
+		for(int i = 0 ; i < coo1.length; i++){
+			LatLng position = new LatLng(Double.parseDouble(coo1[i]), Double.parseDouble(coo2[i]));
+			builder.include(position);
+			GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapActivity.this);
 
-		mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+			maxLat = (int) Math.max(Double.parseDouble(coo1[i]), maxLat);
+			minLat = (int) Math.min(Double.parseDouble(coo1[i]), minLat);
+			maxLon = (int) Math.max(Double.parseDouble(coo2[i]), maxLon);
+			minLon = (int) Math.min(Double.parseDouble(coo2[i]), minLon);
 
+			mGoogleMap = ((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.map)).getMap();
 
-
-		PolylineOptions rectOptions = new PolylineOptions();
-		String tmp="";
-		for(int i=0;i<coo2.size();i++){
-			Log.d("COO2", Double.toString(coo2.get(i).getLat()));
-			position = new LatLng(coo2.get(i).getLat(), coo2.get(i).getLng());
-			tmp+="count : "+(i+1);
-			tmp+=" lat : "+coo2.get(i).getLat();
-			tmp+=" lng : "+coo2.get(i).getLng()+"\n";
-			if(position.latitude == 0 && position.longitude == 0){
-				//¡¬«•∞° πŸ¥Ÿ «—∞°øÓµ• ¬Ô»˜¥¬∞Õ¿ª πÊ¡ˆ«œ±‚ ¿ß«ÿ.√ ±‚»≠∞™.
-				Log.d("position", "0,0");
+			mGoogleMap.setOnMapClickListener(this);
+			
+			if(i == (coo1.length/2)){
+				LatLng po = new LatLng((Double.parseDouble(coo1[0]) +Double.parseDouble(coo1[coo1.length-1]))/2.0, (Double.parseDouble(coo2[0]) +Double.parseDouble(coo2[coo2.length-1]))/2.0);
+//				mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(po,  ((maxLat + minLat)/2 + (maxLon + minLon)/2)/7));
+//				mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(po, 10.0f));
 			}
-			else{
-				mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
-
-				Log.d("LATLON", position.latitude+" : " +position.longitude);
-				mGoogleMap.addMarker(
-						new MarkerOptions().position(position).title(tmp))
-						.showInfoWindow();
-				rectOptions.add(position);
+			//mGoogleMap.addMarker(new MarkerOptions().position(position).title(title)).showInfoWindow();
+			if(i==coo1.length-1 || i==0){
+				mGoogleMap.addMarker(new MarkerOptions().position(position).title(title)).showInfoWindow();
 			}
-			tmp = "";
+			if(old_point!=null){
+				PolylineOptions polylineOptions = new PolylineOptions();
+				polylineOptions.add(old_point);
+				polylineOptions.add(position);
+				mGoogleMap.addPolyline(polylineOptions);
+			}
+			old_point = position;
 		}
-		Log.d("rect", "for-end");
-		rectOptions.color(Color.RED);
-		Polyline polyline = mGoogleMap.addPolyline(rectOptions);
+		
+		mBound = builder.build();
+		mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+			@Override
+			public void onMapLoaded() {
+				// TODO Auto-generated method stub
+				mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBound, 299));
+			}
+		});
+
 		mGoogleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-
 			public boolean onMarkerClick(Marker marker) {
-
 				return false;
 			}
 		});
 	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.save, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
-
 }
-

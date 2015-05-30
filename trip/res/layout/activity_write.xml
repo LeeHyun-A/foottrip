@@ -5,12 +5,12 @@
     android:background="#FFFFFFFF"
     android:orientation="vertical"
     android:screenOrientation="portrait"
-    tools:context=".WriteActivity" >
+    tools:context=".MainActivity" >
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#B0E0E6"
+        android:background="#2B4255"
         android:padding="5dp" >
 
         <ImageButton
@@ -57,7 +57,8 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:gravity="top"
-                    android:hint="What do you Think?"
+                    android:paddingLeft="5dp"
+                    android:hint="어디를 다녀오셨습니까?"
                     android:inputType="textMultiLine" />
 
             </LinearLayout>
@@ -67,20 +68,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#B0E0E6"
+        android:background="#2B4255"
         android:orientation="horizontal"
         android:padding="5dp" >
-
-        <ImageButton
-            android:id="@+id/map_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/map2"
-            android:padding="5dp" />
 
         <ImageButton
             android:id="@+id/picture_btn"
@@ -94,26 +84,16 @@
             android:padding="5dp" />
 
         <ImageButton
-            android:id="@+id/video_btn"
+            android:id="@+id/picture_plus_btn"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/video"
+            android:background="@drawable/picture_plus"
             android:padding="5dp" />
 
-        <ImageButton
-            android:id="@+id/mic_btn"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/mic"
-            android:padding="5dp" />
 
         <ImageButton
             android:id="@+id/tag_btn"

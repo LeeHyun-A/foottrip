@@ -1,0 +1,170 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    android:screenOrientation="portrait"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="40dp"
+        android:background="@color/transparent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/showTimerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0hour 0min 0sec"
+            android:textColor="#FFFFFFFF"
+            android:textSize="25dp" />
+
+        <FrameLayout
+            android:id="@+id/MenuFrame"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp" >
+
+            <ImageView
+                android:id="@+id/background"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#FFFFFFFF"
+                android:visibility="invisible" />
+
+            <com.example.trip.DrawingView
+                android:id="@+id/drawing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:background="#FFFFFFFF"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/selectMenu_test"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/overlay_test"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp" >
+
+            <ImageButton
+                android:id="@+id/startBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="5dp"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/start_btn" />
+
+            <ImageButton
+                android:id="@+id/stopBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="5dp"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/stopbtn" />
+
+            <ImageButton
+                android:id="@+id/pauseBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="5dp"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/pausebtn" />
+
+            <ImageButton
+                android:id="@+id/gomapBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="5dp"
+                android:background="#00000000"
+                android:scaleType="fitXY"
+                android:src="@drawable/gomapbtn" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#2B4255"
+        android:stretchColumns="*" >
+
+        <TableRow>
+
+            <ImageButton
+                android:id="@+id/btn1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/selector"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/newsfeed_w" />
+
+            <ImageButton
+                android:id="@+id/btn2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/selector"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/follow3_w" />
+
+            <ImageButton
+                android:id="@+id/btn3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="#adbcc3"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/location_w" />
+
+            <ImageButton
+                android:id="@+id/btn4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/selector"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/search2_w" />
+
+            <ImageButton
+                android:id="@+id/btn5"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/selector"
+                android:padding="2dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/profile_w" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

@@ -9,6 +9,12 @@ package com.example.trip;
 
 public final class Manifest {
     public static final class permission {
+        /** 
+     이 앱만 해당 메시지를 받도록 사용자 퍼미션을 정의한다. 
+     반드시 애플리케이션의 패키지를 기반하여 이름을 정의한다. 
+    
+         */
+        public static final String C2D_MESSAGE="com.example.trip.permission.C2D_MESSAGE";
         public static final String MAPS_RECEIVE="com.example.trip.permission.MAPS_RECEIVE";
     }
 }

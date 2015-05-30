@@ -5,14 +5,14 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="13"
+        android:minSdkVersion="14"
         android:targetSdkVersion="8" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,19 +20,41 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
+    <uses-permission android:name="android.permission.SET_DEBUG_APP" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
     <permission
         android:name="com.example.trip.permission.MAPS_RECEIVE"
         android:label="signatrue" >
     </permission>
 
+    <!-- GCM은 구글 계정을 필요로 한다. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- 메시지를 받는 동안 프로세스가 슬립모드로 진행되지 않도록 한다. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--
+     이 앱만 해당 메시지를 받도록 사용자 퍼미션을 정의한다. 
+     반드시 애플리케이션의 패키지를 기반하여 이름을 정의한다. 
+    -->
+    <permission
+        android:name="com.example.trip.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission
+        android:name="com.example.trip.permission.C2D_MESSAGE" />
+
+    <!-- 등록결과 수신과 메시지 수신을 위한 퍼미션을 기술한다. -->
+    <uses-permission
+        android:name="com.google.android.c2dm.permission.RECEIVE" />
+    
     <application
+        android:name="com.foottrip.newsfeed.app.AppController"
         android:allowBackup="true"
         android:icon="@drawable/f"
+        android:largeHeap="true"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/SnsTheme" >
         <activity
-            android:name="com.example.trip.MainActivity"
+            android:name="com.example.trip.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +74,7 @@
         </activity>
         <activity
             android:name="com.example.trip.MapActivity"
-            android:label="mapActivity"
+            android:label="google map"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -71,18 +93,128 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="com.example.trip.SnsActivity"
+            android:label="NewFeed"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.example.trip.WriteActivity"
             android:label="write"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name="com.example.trip.GalleryActivity"
+            android:label="gallery"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.MapGallery"
+            android:label="google map"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.FullImageActivity"
+            android:label="full size image"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.Likeform"
+            android:label="like"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.likepersonsite"
+            android:label="personal site"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.commentform"
+            android:label="comment"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.StartActivity"
+            android:label="comment"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.StopActivity"
+            android:label="comment"
+            android:screenOrientation="portrait" >
+        </activity>
 
+        <activity android:name="com.facebook.LoginActivity" />
+        <activity
+            android:name="PickerActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.example.trip.MapViewInservice"
+            android:label="google map"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.example.trip.FollowerActivity"
+            android:label="Follower" >
+        </activity>
+        <activity
+            android:name="com.example.trip.FolloweeActivity"
+            android:label="Followee" >
+        </activity>
+        <activity
+            android:name="com.example.trip.CardListActivity"
+            android:label="CardList"
+            android:theme="@style/CustomActionBarTheme" >
+        </activity>
+        <activity
+            android:name="com.example.trip.MyProfileActivity"
+            android:label="profile"
+            android:theme="@style/ProfileTheme" >
+        </activity>
+        
+        <activity 
+            android:name="com.example.trip.TopPathActivity"
+            android:label = "search"
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
+        <activity 
+            android:name="com.example.trip.TopPlaceActivity"
+            android:label = "search"
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
+        
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
         <service
-            android:name="com.example.trip.FusedLocationService"
+            android:name="com.example.trip.FusedLocationService3"
             android:enabled="true" />
+         <!--
+          브로드캐스트 리시버가 GCM으로 부터 인텐트를 수신하고, 
+          이를 처리하기 위해 사용자 서비스를 호출한다. 
+          com.google.android.c2dm.permission.SEND 퍼미션은 반드시 필요하다.
+      -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!-- Receives the registration id. -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.google.android.gcm.demo.app" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          브로드캐스트 리시버가 GCM 서비스로 부터 받은 인텐트를 처리하기 위해 
+          사용하는 서비스이다. 서비스의 기본 이름은 .GCMIntentService이며
+          만약 이를 변경하고 싶으면 브로드캐스트 리시버를 변경해야 한다. 
+        -->
+        <service android:name=".GCMIntentService" />
 
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDezpT5x-CuQecWjgXoAc56klVB5gZkpv4" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyASZVCSjyoItVVY_wL2D089AneE0YKft3o" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

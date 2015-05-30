@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#FFFFF0"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:textColor="#00B050" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_marginBottom="35dp"
+        android:orientation="vertical" >
+
+        <ScrollView
+            android:id="@+id/textScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" >
+
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/map_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="#aaaaff"
+                        android:scaleType="fitXY" />
+
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/profile_img"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:scaleType="fitCenter" />
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_toRightOf="@+id/profile_img"
+                        android:paddingLeft="5dp"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/user_name"
+                        android:layout_toRightOf="@+id/profile_img"
+                        android:paddingLeft="5dp"
+                        android:textSize="13dp" />
+
+                    <ImageButton
+                        android:id="@+id/map_btn"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="10dp"
+                        android:background="#00000000"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/go_map_btn" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="@dimen/feed_item_status_pad_left_right"
+                    android:paddingRight="@dimen/feed_item_status_pad_left_right"
+                    android:paddingTop="@dimen/feed_item_status_pad_top" />
+
+                <RelativeLayout
+                    android:id="@+id/love_reply_cnt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/loveCnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/feed_item_status_pad_left_right"
+                        android:paddingRight="@dimen/feed_item_status_pad_left_right"
+                        android:paddingTop="@dimen/feed_item_status_pad_top" />
+
+                    <TextView
+                        android:id="@+id/replyCnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/loveCnt"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/feed_item_status_pad_left_right"
+                        android:paddingRight="@dimen/feed_item_status_pad_left_right"
+                        android:paddingTop="@dimen/feed_item_status_pad_top" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/imglist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="4dp" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/button_list"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/loveBtn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:background="#00000000"
+            android:onClick="scale"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/unlove" />
+
+        <ImageButton
+            android:id="@+id/reply"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="15dp"
+            android:layout_toRightOf="@+id/loveBtn"
+            android:background="#00000000"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/reply" />
+
+        <ImageButton
+            android:id="@+id/share"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="15dp"
+            android:layout_toRightOf="@+id/reply"
+            android:background="#00000000"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/share" />
+    </RelativeLayout>
+
+</RelativeLayout>

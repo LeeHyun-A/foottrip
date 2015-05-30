@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/profile_layout"
+        android:orientation="horizontal" >
+
+        <com.foottrip.newsfeed.app.CircledNetworkImageView
+            android:id="@+id/profile_image"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/default_profile"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ddd" />
+
+        <LinearLayout
+            android:id="@+id/namelayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="김희재"
+                android:textSize="30dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_layout"
+        android:background="@drawable/border"
+        android:padding="10dp"
+        android:stretchColumns="*" >
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/tripbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/lightgray"
+                android:scaleType="fitCenter"
+                android:text="Trip"
+                android:textColor="#2f4f4f" />
+
+            <Button
+                android:id="@+id/followerbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ff0000"
+                android:scaleType="fitCenter"
+                android:text="Follower"
+                android:textColor="#2f4f4f" />
+
+            <Button
+                android:id="@+id/followingbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ff0000"
+                android:scaleType="fitCenter"
+                android:text="Followee"
+                android:textColor="#2f4f4f" />
+
+            <Button
+                android:id="@+id/morebtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ff0000"
+                android:scaleType="fitCenter"
+                android:text="More"
+                android:textColor="#2f4f4f" />
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

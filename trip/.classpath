@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="C:/Users/HyunA/Desktop/import/apache-httpcomponents-httpclient.jar"/>
-	<classpathentry kind="lib" path="C:/Users/HyunA/Desktop/import/apache-httpcomponents-httpcore.jar"/>
-	<classpathentry kind="lib" path="C:/Users/HyunA/Desktop/import/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/HyunA/Desktop/import/json-simple-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/apache-httpcomponents-httpclient.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/apache-httpcomponents-httpcore.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/commons-configuration-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/commons-lang-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/json-simple-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/log4j-1.2.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/protobuf-java-2.4.0a.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/slf4j-api-1.4.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/LeeHyun-A/졸업작품/external_jar_files/slf4j-log4j12-1.4.3.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

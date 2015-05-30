@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- the theme applied to the application or activity -->
+    <style name="SnsTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar3</item>
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/MyActionBar3</item>
+    </style>
+
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar3" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:icon">@drawable/f</item>
+        <item name="android:background">#2B4255</item> <!-- 색상 및 이미지로 액션바 배경색 지정 -->
+    </style>
+
+</resources>

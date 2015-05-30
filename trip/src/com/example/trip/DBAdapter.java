@@ -7,19 +7,21 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.telephony.PhoneNumberUtils;
-import android.telephony.TelephonyManager;
+import android.telephony.TelephonyManager; 
 import android.util.Log;
 
 public class DBAdapter{
 	static final String KEY_ROWID = "_id"; 
 	static final String KEY_LAT = "lat";
 	static final String KEY_LNG = "lng";
+	static final String KEY_DATE = "date";
+	static final String KEY_STATE = "state";
 	static final String TAG = "DBAdapter"; 
 	static final String DATABASE_NAME = "MyDB";
 	static final String DATABASE_TABLE = "tmpLATLNG";
 	static final int DATABASE_VERSION = 1; 
 	static final String DATABASE_CREATE = "create table " + DATABASE_TABLE + " (_id INTEGER primary key AUTOINCREMENT, " 
-			+ "lat text not null, lng text not null);"; 
+			+ "lat text not null, lng text not null, date text not null, state text not null);"; 
 	final Context context;
 
 	DatabaseHelper DBHelper;
@@ -28,7 +30,7 @@ public class DBAdapter{
 		this.context = ctx;
 		DBHelper = new DatabaseHelper(context); 
 		
-		//table ÀÌ¸§ ¼³Á¤. id·Î ÇÏ¸é ÁÁÀ» µí.
+		//table ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½. idï¿½ï¿½ ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
 		
 		
 	}
@@ -62,13 +64,14 @@ public class DBAdapter{
 		DBHelper.close(); 
 	}
 	//---insert a contact into the database---
-	public long insertContact(String lat, String lng) { 
+	public long insertContact(String lat, String lng, String date, String state) { 
 		ContentValues initialValues= new ContentValues(); 
 		initialValues.put(KEY_LAT, lat);
 		initialValues.put(KEY_LNG, lng);
+		initialValues.put(KEY_DATE, date);
+		initialValues.put(KEY_STATE, state);
 		return db.insert(DATABASE_TABLE, null, initialValues); 
 	} 
-
 	//---deletes a particular contact---
 	public boolean deleteContact(long rowId) {
 		return db.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
@@ -76,21 +79,23 @@ public class DBAdapter{
 	// ---retrieves all the contacts--- 
 	public Cursor getAllContacts() { 
 		return db.query(DATABASE_TABLE, new String[] { 
-				KEY_ROWID, KEY_LAT, KEY_LNG }, null, null, null, null, null);
+				KEY_ROWID, KEY_LAT, KEY_LNG , KEY_DATE, KEY_STATE}, null, null, null, null, null);
 	} 
 	// ---retrieves a particular contact--- 
 	public Cursor getContact(long rowId) throws SQLException{ 
 		Cursor mCursor= db.query(true, DATABASE_TABLE, new String[] { 
-				KEY_ROWID, KEY_LAT, KEY_LNG }, KEY_ROWID + "=" + rowId, null, null, null, null, null);
+				KEY_ROWID, KEY_LAT, KEY_LNG , KEY_DATE, KEY_STATE}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
 		if (mCursor!= null) {
 			mCursor.moveToFirst(); 
 		}
 		return mCursor; 
 	} // ---updates a contact--- 
-	public boolean updateContact(long rowId, String lat, String lng) { 
+	public boolean updateContact(long rowId, String lat, String lng, String date, String state) { 
 		ContentValues args= new ContentValues();
 		args.put(KEY_LAT, lat);
 		args.put(KEY_LNG, lng); 
+		args.put(KEY_DATE, date);
+		args.put(KEY_STATE, state);
 		return db.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0; 
 	}
 }// class DBAdapter

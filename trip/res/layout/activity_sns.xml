@@ -1,0 +1,84 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ListView
+        android:id="@+id/timeline"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:background="#C0C0C0"
+        android:dividerHeight="7dp"
+        android:padding="4dp"
+        android:divider="@null" />
+
+    <TableLayout
+        android:id="@+id/table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#2B4255"
+        android:stretchColumns="*" >
+
+        <TableRow>
+            <ImageButton
+                android:id="@+id/btn1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:background="@drawable/selector"
+                android:scaleType="fitCenter"
+                android:src="@drawable/newsfeed_w" />
+            <ImageButton
+                android:id="@+id/btn2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:background="@drawable/selector"
+                android:scaleType="fitCenter"
+                android:src="@drawable/follow3_w" />
+            <ImageButton
+                android:id="@+id/btn3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:background="#adbcc3"
+                android:scaleType="fitCenter"
+                android:src="@drawable/location_w" />
+            <!-- android:background="@drawable/selector" -->
+            <ImageButton
+                android:id="@+id/btn4"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:background="@drawable/selector"
+                android:scaleType="fitCenter"
+                android:src="@drawable/search2_w" />
+            <ImageButton
+                android:id="@+id/btn5"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="2dp"
+                android:background="@drawable/selector"
+                android:scaleType="fitCenter"
+                android:src="@drawable/profile_w" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
